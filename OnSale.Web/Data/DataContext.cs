@@ -10,8 +10,11 @@ namespace OnSale.Web.Data
 
         }
 
+        public DbSet<Category> Categories { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
 
         public DbSet<Country> Countries { get; set; }
 
@@ -20,6 +23,11 @@ namespace OnSale.Web.Data
             base.OnModelCreating(modelBuilder);
 
             //Создаем модели для базы данных
+
+            //Категории
+            modelBuilder.Entity<Category>()
+                .HasIndex(t => t.Name)
+                .IsUnique();
 
             //Город
             modelBuilder.Entity<City>()
@@ -33,6 +41,11 @@ namespace OnSale.Web.Data
 
             //Департамент
             modelBuilder.Entity<Department>()
+                .HasIndex(t => t.Name)
+                .IsUnique();
+
+                //Продукты
+            modelBuilder.Entity<Product>()
                 .HasIndex(t => t.Name)
                 .IsUnique();
         }
