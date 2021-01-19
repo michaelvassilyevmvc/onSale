@@ -35,6 +35,7 @@ namespace OnSale.Web
                 {
                     cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                 });
+            services.AddTransient<SeedDb>();
             services.AddControllersWithViews();
 
         }
