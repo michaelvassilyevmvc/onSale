@@ -143,6 +143,8 @@ namespace OnSale.Web.Controllers
             }
 
             var country = await _context.Countries
+                .Include(c=>c.Departments)
+                .ThenInclude(d => d.Cities)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (country == null)
             {
@@ -273,6 +275,187 @@ namespace OnSale.Web.Controllers
                 }
             }
             return View(department);
+        }
+
+        public async Task<IActionResult> DeleteDepartment(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Department department = await _context.Departments
+                .Include(d => d.Cities)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            //Выбираем страну чтобы можно было вернуться в детализацию этой страны
+            Country country = await _context.Countries
+                .FirstOrDefaultAsync(c => c.Departments.FirstOrDefault(d => d.Id == department.Id) != null);
+            _context.Departments.Remove(department);
+            await _context.SaveChangesAsync();
+
+            //return RedirectToAction($"{nameof(Details)}/{country.Id}");
+            return RedirectToAction("Details", "Countries", new {id = country.Id});
+        }
+
+        public async Task<IActionResult> DetailsDepartment(int? id)
+        {
+            //Если не указали на какое отделение то страница не существует
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Department department = await _context.Departments
+                .Include(d => d.Cities)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            Country country = await _context.Countries
+                .FirstOrDefaultAsync(c => c.Departments.FirstOrDefault(d => d.Id == department.Id) != null);
+            department.IdCountry = country.Id;
+            return View(department);
+        }
+
+        public async Task<IActionResult> AddCity(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Department department = await _context.Departments.FindAsync(id);
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            City model = new City { IdDepartment = department.Id };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddCity(City city)
+        {
+            if (ModelState.IsValid)
+            {
+                Department department = await _context.Departments
+                    .Include(d => d.Cities)
+                    .FirstOrDefaultAsync(c => c.Id == city.IdDepartment);
+                if (department == null)
+                {
+                    return NotFound();
+                }
+
+                try
+                {
+                    city.Id = 0;
+                    department.Cities.Add(city);
+                    _context.Update(department);
+                    await _context.SaveChangesAsync();
+                    //return RedirectToAction($"{nameof(DetailsDepartment)}/{department.Id}");
+                    return RedirectToAction("DetailsDepartment", "Countries", new {id = department.Id});
+
+                }
+                catch (DbUpdateException dbUpdateException)
+                {
+                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                    {
+                        ModelState.AddModelError(string.Empty, "Существует запись с таким наименованием.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                }
+            }
+
+            return View(city);
+        }
+
+        public async Task<IActionResult> EditCity(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            City city = await _context.Cities.FindAsync(id);
+            if (city == null)
+            {
+                return NotFound();
+            }
+
+            Department department = await _context.Departments.FirstOrDefaultAsync(d => d.Cities.FirstOrDefault(c => c.Id == city.Id) != null);
+            city.IdDepartment = department.Id;
+            return View(city);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCity(City city)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(city);
+                    await _context.SaveChangesAsync();
+                    //return RedirectToAction($"{nameof(DetailsDepartment)}/{city.IdDepartment}");
+                    return RedirectToAction("DetailsDepartment", "Countries", new {id = city.IdDepartment});
+
+                }
+                catch (DbUpdateException dbUpdateException)
+                {
+                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                    {
+                        ModelState.AddModelError(string.Empty, "Существует запись с таким же наименованием.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                }
+            }
+            return View(city);
+        }
+
+        public async Task<IActionResult> DeleteCity(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            City city = await _context.Cities
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (city == null)
+            {
+                return NotFound();
+            }
+
+            Department department = await _context.Departments
+                .FirstOrDefaultAsync(d => d.Cities.FirstOrDefault(c => c.Id == city.Id) != null);
+            _context.Cities.Remove(city);
+            await _context.SaveChangesAsync();
+            //return RedirectToAction($"{nameof(DetailsDepartment)}/{department.Id}");
+            return RedirectToAction("DetailsDepartment", "Countries", new {id = department.Id});
         }
 
     }
