@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using OnSale.Web.Data;
+using OnSale.Web.Helpers;
 
 namespace OnSale.Web
 {
@@ -36,6 +37,8 @@ namespace OnSale.Web
                     cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                 });
             services.AddTransient<SeedDb>();
+            services.AddScoped<IBlobHelper, BlobHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddControllersWithViews();
 
         }
