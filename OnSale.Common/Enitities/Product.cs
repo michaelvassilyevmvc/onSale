@@ -18,6 +18,8 @@ namespace OnSale.Common.Enitities
         public string Description { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:C2}")]
+        [Display(Name = "Цена")]
+        [DataType(DataType.Currency,ErrorMessage = "Цена должна быть числом")]
         public decimal Price { get; set; }
 
         [DisplayName("Действующее")]
