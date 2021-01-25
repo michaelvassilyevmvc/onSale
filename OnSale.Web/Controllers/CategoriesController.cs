@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnSale.Web.Data;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using OnSale.Common.Enitities;
 using OnSale.Web.Helpers;
 using OnSale.Web.Models;
 
 namespace OnSale.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly DataContext _context;
