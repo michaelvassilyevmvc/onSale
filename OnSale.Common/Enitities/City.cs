@@ -23,6 +23,10 @@ namespace OnSale.Common.Enitities
         [NotMapped]
         public int IdDepartment { get; set; }
 
-        
+        //Необходимо для каскадного доступа и удаления
+        [JsonIgnore]
+        public Department Department { get; set; }
+
+
     }
 }

@@ -38,7 +38,7 @@ namespace OnSale.Common.Enitities
         //TODO: Pending to put the correct paths
         [Display(Name = "Изображение")]
         public string ImageFullPath => ProductImages == null || ProductImages.Count == 0
-            ? $"https://localhost:44315/images/noimage.png"
+            ? $"https://onsalesomik.azurewebsites.net/images/noimage.png"
             : ProductImages.FirstOrDefault().ImageFullPath;
     }
 }

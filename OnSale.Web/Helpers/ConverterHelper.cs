@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,9 +51,25 @@ namespace OnSale.Web.Helpers
                 IsActive = model.IsActive,
                 IsStarred = model.IsStarred,
                 Name = model.Name,
-                Price = model.Price,
+                Price = ToPrice(model.PriceString),
                 ProductImages = model.ProductImages
             };
+        }
+
+        private decimal ToPrice(string priceString)
+        {
+            string nds = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            if (nds == ".")
+            {
+                priceString = priceString.Replace(',', '.');
+
+            }
+            else
+            {
+                priceString = priceString.Replace('.', ',');
+            }
+
+            return decimal.Parse(priceString);
         }
 
         public ProductViewModel ToProductViewModel(Product product)
@@ -68,6 +85,7 @@ namespace OnSale.Web.Helpers
                 IsStarred = product.IsStarred,
                 Name = product.Name,
                 Price = product.Price,
+                PriceString = $"{product.Price}",
                 ProductImages = product.ProductImages
             };
         }

@@ -14,12 +14,18 @@ namespace OnSale.Web.Models
     {
         [Display(Name = "Категория")]
         [Range(1, int.MaxValue, ErrorMessage = "Вы должны выбрать категорию.")]
-        [Required]
+        [Required(ErrorMessage = "Обязательное поле")]
         public int CategoryId { get; set; }
             
         public IEnumerable<SelectListItem> Categories { get; set; }
 
         [Display(Name = "Изображение")]
         public IFormFile ImageFile { get; set; }
+
+        [RegularExpression(@"^\d+([\.\,]?\d+)?$", ErrorMessage = "Используйте только цифры . или , для вставки десятичных дробей")]
+        [Required(ErrorMessage = "Обязательное поле")]
+        [Display(Name="Цена")]
+        [MaxLength(12,ErrorMessage = "Для поля {0} максимальное количество цифр {1}")]
+        public string PriceString { get; set; }
     }
 }
