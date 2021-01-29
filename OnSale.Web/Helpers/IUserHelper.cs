@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using OnSale.Common.Enums;
 using OnSale.Web.Data.Entities;
 using OnSale.Web.Models;
 
@@ -26,5 +27,6 @@ namespace OnSale.Web.Helpers
         Task LogoutAsync();
 
         Task<SignInResult> ValidatePasswordAsync(User user, string password);
+        Task<User> AddUserAsync(AddUserViewModel model, Guid imageId, UserType userType);
     }
 }
