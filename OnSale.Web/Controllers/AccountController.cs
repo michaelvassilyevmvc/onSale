@@ -4,11 +4,13 @@ using OnSale.Web.Helpers;
 using OnSale.Web.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnSale.Common.Enitities;
 using OnSale.Common.Enums;
 using OnSale.Web.Data;
 using OnSale.Web.Data.Entities;
+using OnSale.Common.Responses;
 
 namespace OnSale.Web.Controllers
 {
@@ -18,17 +20,21 @@ namespace OnSale.Web.Controllers
         private readonly IUserHelper _userHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IBlobHelper _blobHelper;
+        private readonly IMailHelper _mailHelper;
 
         public AccountController(
             DataContext context,
             IUserHelper userHelper,
             ICombosHelper combosHelper,
-            IBlobHelper blobHelper)
+            IBlobHelper blobHelper,
+            IMailHelper mailHelper
+            )
         {
             _context = context;
             _userHelper = userHelper;
             _combosHelper = combosHelper;
             _blobHelper = blobHelper;
+            _mailHelper = mailHelper;
         }
 
         public IActionResult Login()
@@ -109,19 +115,24 @@ namespace OnSale.Web.Controllers
                     return View(model);
                 }
 
-                LoginViewModel loginViewModel = new LoginViewModel
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
                 {
-                    Password = model.Password,
-                    RememberMe = false,
-                    Username = model.Username
-                };
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
 
-                var result2 = await _userHelper.LoginAsync(loginViewModel);
-
-                if (result2.Succeeded)
+                Response response = _mailHelper.SendMail(model.Username, "Email confirmation", $"<h1>Подтверждение Email</h1>" +
+                                                                                               $"Разрешить пользователю, " +
+                                                                                               $"пожалуйста, нажмите на эту ссылку:</br></br><a href = \"{tokenLink}\">Подтверждение Email</a>");
+                if (response.IsSuccess)
                 {
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.Message = "Инструкции, позволяющие разрешить вашему пользователю, были отправлены по электронной почте." +
+                                      "";
+                    return View(model);
                 }
+
+                ModelState.AddModelError(string.Empty, response.Message);
             }
 
             model.Countries = _combosHelper.GetComboCountries(); 
@@ -264,5 +275,28 @@ namespace OnSale.Web.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            User user = await _userHelper.GetUserAsync(new Guid(userId));
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            IdentityResult result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return NotFound();
+            }
+
+            return View();
+        }
+
     }
 }   

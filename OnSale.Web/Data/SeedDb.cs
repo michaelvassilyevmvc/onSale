@@ -24,7 +24,7 @@ namespace OnSale.Web.Data
             await _context.Database.EnsureCreatedAsync();
             await CheckCountriesAsync();
             await CheckRolesAsync();
-            await CheckUserAsync("1010", "Джон", "Сноу", "jzuluaga55@hotmail.com", "322 311 4620", "Ленина 2 дом 3", UserType.Admin);
+            await CheckUserAsync("1010", "Джон", "Сноу", "rebusmv@mail.ru", "322 311 4620", "Ленина 2 дом 3", UserType.Admin);
         }
 
         private async Task CheckRolesAsync()
@@ -60,6 +60,10 @@ namespace OnSale.Web.Data
 
                 await _userHelper.AddUserAsync(user, "123456");
                 await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+
+                string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
+
             }
 
             return user;
