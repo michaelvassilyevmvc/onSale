@@ -298,5 +298,64 @@ namespace OnSale.Web.Controllers
             return View();
         }
 
+
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _userHelper.GetUserAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Электронная почта не соответствует зарегистрированному пользователю.");
+                    return View(model);
+                }
+
+                string myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                string link = Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+                _mailHelper.SendMail(model.Email, "Password Reset", $"<h1>Восстановление пароля</h1>" +
+                                                                    $"Чтобы сбросить пароль, щелкните по этой ссылке:</br></br>" +
+                                                                    $"<a href = \"{link}\">Сброс пароля</a>");
+                ViewBag.Message = "Инструкции по восстановлению пароля были отправлены на электронную почту.";
+                return View();
+
+            }
+
+            return View(model);
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            User user = await _userHelper.GetUserAsync(model.UserName);
+            if (user != null)
+            {
+                IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {
+                    ViewBag.Message = "Сброс пароля выполнен успешно.";
+                    return View();
+                }
+
+                ViewBag.Message = "Ошибка при сбросе пароля.";
+                return View(model);
+            }
+
+            ViewBag.Message = "Пользователь не найден.";
+            return View(model);
+        }
     }
 }   
