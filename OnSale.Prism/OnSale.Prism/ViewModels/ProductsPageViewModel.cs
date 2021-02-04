@@ -9,6 +9,7 @@ using OnSale.Common.Responses;
 using OnSale.Common.Services;
 using Prism.Navigation;
 using Xamarin.Essentials;
+using OnSale.Prism.ItemViewModels;
 
 namespace OnSale.Prism.ViewModels
 {
@@ -16,20 +17,44 @@ namespace OnSale.Prism.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
-        private ObservableCollection<Product> _products;
+        private ObservableCollection<ProductItemViewModel> _products;
+        private bool _isRunning;
+        private string _search;
+        private List<Product> _myProducts;
+        private DelegateCommand _searchCommand;
+
+        public DelegateCommand SearchCommand => _searchCommand ?? (_searchCommand = new DelegateCommand(ShowProducts));
 
 
-        public ObservableCollection<Product> Products
+        public string Search
+        {
+            get => _search;
+            set
+            {
+                SetProperty(ref _search, value);
+                ShowProducts();
+            }
+        }
+
+
+        public ObservableCollection<ProductItemViewModel> Products
         {
             get => _products;
             set => SetProperty(ref _products, value);
         }
 
+        public bool IsRunning 
+        {
+            get => _isRunning;
+            set => SetProperty(ref _isRunning, value); 
+        }
+
+
         public ProductsPageViewModel(INavigationService navigationService,IApiService apiService):base(navigationService)
         {
             _navigationService = navigationService;
             _apiService = apiService;
-            Title = "Product";
+            Title = "Продукты";
             LoadProductsAsync();
         }
 
@@ -41,11 +66,13 @@ namespace OnSale.Prism.ViewModels
                 return;
             }
 
+            //Запускаем значок загрузки
+            IsRunning = true;
+
             string url = App.Current.Resources["UrlAPI"].ToString();
-            Response response = await _apiService.GetListAsync<Product>(
-                url,
-                "/api",
-                "/Products");
+            Response response = await _apiService.GetListAsync<Product>(url, "/api", "/Products");
+
+            IsRunning = false;
 
             if (!response.IsSuccess)
             {
@@ -56,8 +83,43 @@ namespace OnSale.Prism.ViewModels
                 return;
             }
 
-            List<Product> myProducts = (List<Product>)response.Result;
-            Products = new ObservableCollection<Product>(myProducts);
+            this._myProducts = (List<Product>)response.Result;
+            ShowProducts();
+        }
+
+        private void ShowProducts()
+        {
+            if (string.IsNullOrEmpty(Search))
+            {
+                Products = new ObservableCollection<ProductItemViewModel>(_myProducts.Select(p => new ProductItemViewModel(_navigationService)
+                {
+                    Category = p.Category,
+                    Description = p.Description,
+                    Id = p.Id,
+                    IsActive = p.IsActive,
+                    IsStarred = p.IsStarred,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages
+                })
+           .ToList());
+            }
+            else
+            {
+                Products = new ObservableCollection<ProductItemViewModel>(_myProducts.Select(p => new ProductItemViewModel(_navigationService)
+                {
+                    Category = p.Category,
+                    Description = p.Description,
+                    Id = p.Id,
+                    IsActive = p.IsActive,
+                    IsStarred = p.IsStarred,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages
+                })
+            .Where(p => p.Name.ToLower().Contains(Search.ToLower()))
+            .ToList());
+            }
         }
     }
 }
