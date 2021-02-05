@@ -10,6 +10,7 @@ using OnSale.Common.Services;
 using Prism.Navigation;
 using Xamarin.Essentials;
 using OnSale.Prism.ItemViewModels;
+using OnSale.Prism.Helpers;
 
 namespace OnSale.Prism.ViewModels
 {
@@ -54,7 +55,7 @@ namespace OnSale.Prism.ViewModels
         {
             _navigationService = navigationService;
             _apiService = apiService;
-            Title = "Продукты";
+            Title = Languages.Products;
             LoadProductsAsync();
         }
 
@@ -62,7 +63,7 @@ namespace OnSale.Prism.ViewModels
         {
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
-                await App.Current.MainPage.DisplayAlert("Ошибка", "Проверьте подключение к Интернету.", "Принять");
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ConnectionError, Languages.Accept);
                 return;
             }
 
@@ -76,7 +77,7 @@ namespace OnSale.Prism.ViewModels
 
             if (!response.IsSuccess)
             {
-                await App.Current.MainPage.DisplayAlert("Ошибка", response.Message, "Принять");
+                await App.Current.MainPage.DisplayAlert(Languages.Error, response.Message, Languages.Accept);
                 return;
             }
 

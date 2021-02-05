@@ -117,17 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>Принять</value>
+  </data>
   <data name="ConnectionError" xml:space="preserve">
     <value>Проверьте подключение к интернету</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Ошибка</value>
   </data>
-  <data name="Accept" xml:space="preserve">
-    <value>Принять</value>
-  </data>
   <data name="Loading" xml:space="preserve">
-    <value>Загрузка…</value>
+    <value>Загрузка</value>
   </data>
   <data name="SearchProduct" xml:space="preserve">
     <value>Поиск продукта</value>
@@ -142,18 +142,18 @@
     <value>Цена</value>
   </data>
   <data name="Category" xml:space="preserve">
-    <value>Категории</value>
+    <value>Категория</value>
   </data>
   <data name="IsStarred" xml:space="preserve">
-    <value>Помечен</value>
+    <value>Помечено звездочками</value>
   </data>
   <data name="AddToCart" xml:space="preserve">
     <value>Добавить в корзину</value>
   </data>
   <data name="Product" xml:space="preserve">
-    <value>Изделие</value>
+    <value>Товар</value>
   </data>
   <data name="Products" xml:space="preserve">
-    <value>Продукты</value>
+    <value>Товары</value>
   </data>
 </root>

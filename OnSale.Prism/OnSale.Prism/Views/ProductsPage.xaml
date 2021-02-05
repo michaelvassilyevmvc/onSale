@@ -5,16 +5,18 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="OnSale.Prism.Views.ProductsPage"
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:i18n="clr-namespace:OnSale.Prism.Helpers"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
              xmlns:busyindicator="clr-namespace:Syncfusion.SfBusyIndicator.XForms;assembly=Syncfusion.SfBusyIndicator.XForms"
              Title="{Binding Title}"
+             Background="{StaticResource ColorBackground}"
              >
     <AbsoluteLayout>
         <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
                      AbsoluteLayout.LayoutFlags="All" 
                      Padding="5">
-            <SearchBar Placeholder="Поиск продукта..."
+            <SearchBar Placeholder="{i18n:Translate SearchProduct}"
                 SearchCommand="{Binding SearchCommand}"
                 Text="{Binding Search}"/>
             <CollectionView ItemsSource="{Binding Products}">
@@ -57,13 +59,14 @@
             <busyindicator:SfBusyIndicator AnimationType="Gear" 
                                        AbsoluteLayout.LayoutBounds=".5,.5,.5,.5"
                 	                   AbsoluteLayout.LayoutFlags="All"
-                	                   BackgroundColor="Silver"
                 	                   HorizontalOptions="Center"
-                	                   TextColor="White"
                 	                   IsBusy="{Binding IsRunning}"
-                	                   Title="Загрузка..."
+                	                   Title="{i18n:Translate Loading}"
                 	                   VerticalOptions="Center"
                 	                   ViewBoxWidth="80"
-                	                   ViewBoxHeight="80" />
+                	                   ViewBoxHeight="80"
+                                       BackgroundColor="{StaticResource ColorAccent}"
+                                       TextColor="{StaticResource ColorFontInverse}"
+                                           />
     </AbsoluteLayout>
 </ContentPage>
