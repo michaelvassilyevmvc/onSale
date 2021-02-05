@@ -38,8 +38,8 @@
     <string>1</string>
     <key>CFBundleLocalizations</key>
     <array>
-	    <string>es</string>
-	    <string>pt</string>
+	    <string>en</string>
+	    <string>ru</string>
     </array>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>

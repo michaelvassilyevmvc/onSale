@@ -133,6 +133,24 @@ namespace OnSale.Prism.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Login.
+        /// </summary>
+        internal static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Modify user.
+        /// </summary>
+        internal static string ModifyUser {
+            get {
+                return ResourceManager.GetString("ModifyUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Name.
         /// </summary>
         internal static string Name {
@@ -174,6 +192,24 @@ namespace OnSale.Prism.Resources {
         internal static string SearchProduct {
             get {
                 return ResourceManager.GetString("SearchProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Show purchase history.
+        /// </summary>
+        internal static string ShowPurchaseHistory {
+            get {
+                return ResourceManager.GetString("ShowPurchaseHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Show shopping car.
+        /// </summary>
+        internal static string ShowShoppingCar {
+            get {
+                return ResourceManager.GetString("ShowShoppingCar", resourceCulture);
             }
         }
     }
