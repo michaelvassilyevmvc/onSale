@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Prism.Core" Version="8.0.0.1909" />
+    <PackageReference Include="Syncfusion.Xamarin.Core" Version="18.4.0.41" />
     <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator" Version="18.4.0.41" />
     <PackageReference Include="Syncfusion.Xamarin.SfRotator" Version="18.4.0.41" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />

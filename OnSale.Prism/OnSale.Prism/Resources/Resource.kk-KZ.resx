@@ -168,4 +168,34 @@
   <data name="ShowShoppingCar" xml:space="preserve">
     <value>Показать корзину</value>
   </data>
+  <data name="Email" xml:space="preserve">
+    <value>Электрондық пошта</value>
+  </data>
+  <data name="EmailPlaceHolder" xml:space="preserve">
+    <value>Электрондық пошта мекенжайын енгізіңіз</value>
+  </data>
+  <data name="EmailError" xml:space="preserve">
+    <value>Сіз дұрыс электрондық поштаны енгізуіңіз керек.!</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Құпиясөз:</value>
+  </data>
+  <data name="PasswordPlaceHolder" xml:space="preserve">
+    <value>Құпия сөзді енгізіңіз.</value>
+  </data>
+  <data name="PasswordError" xml:space="preserve">
+    <value>Вы должны ввести свой пароль</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Құпия сөзді ұмытып қалдыңыз ба?</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Регистрация нового пользователя</value>
+  </data>
+  <data name="LoginError" xml:space="preserve">
+    <value>Email или пароль не верны</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>шығу</value>
+  </data>
 </root>
