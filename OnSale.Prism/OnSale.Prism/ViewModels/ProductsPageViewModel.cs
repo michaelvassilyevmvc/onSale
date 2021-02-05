@@ -76,10 +76,7 @@ namespace OnSale.Prism.ViewModels
 
             if (!response.IsSuccess)
             {
-                await App.Current.MainPage.DisplayAlert(
-                    "Ошибка",
-                    response.Message,
-                    "Принять");
+                await App.Current.MainPage.DisplayAlert("Ошибка", response.Message, "Принять");
                 return;
             }
 
