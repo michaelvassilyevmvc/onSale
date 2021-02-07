@@ -5,11 +5,20 @@ using Prism.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using OnSale.Common.Helpers;
+using OnSale.Common.Request;
+using OnSale.Common.Responses;
+using OnSale.Common.Services;
+using OnSale.Prism.Views;
+using Xamarin.Essentials;
 
 namespace OnSale.Prism.ViewModels
 {
     public class LoginPageViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigationService;
+        private readonly IApiService _apiService;
         private bool _isRunning;
         private bool _isEnabled;
         private string _password;
@@ -17,10 +26,12 @@ namespace OnSale.Prism.ViewModels
         private DelegateCommand _registerCommand;
         private DelegateCommand _forgotPasswordCommand;
 
-        public LoginPageViewModel(INavigationService navigationService) : base(navigationService)
+        public LoginPageViewModel(INavigationService navigationService, IApiService apiService) : base(navigationService)
         {
-            Title = Languages.Login;
-            IsEnabled = true;
+            this._navigationService = navigationService;
+            this._apiService = apiService;
+           this. Title = Languages.Login;
+            this.IsEnabled = true;
         }
 
         public DelegateCommand LoginCommand => _loginCommand ?? (_loginCommand = new DelegateCommand(LoginAsync));
@@ -68,6 +79,46 @@ namespace OnSale.Prism.ViewModels
                     Languages.Accept);
                 return;
             }
+
+            IsRunning = true;
+            IsEnabled = false;
+
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                IsRunning = false;
+                IsEnabled = true;
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ConnectionError, Languages.Accept);
+                return;
+            }
+
+            string url = App.Current.Resources["UrlAPI"].ToString();
+            TokenRequest request = new TokenRequest
+            {
+                Password = Password,
+                Username = Email
+            };
+
+            Response response = await _apiService.GetTokenAsync(url, "api", "/Account/CreateToken", request);
+            IsRunning = false;
+            IsEnabled = true;
+
+            if (!response.IsSuccess)
+            {
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.LoginError, Languages.Accept);
+                Password = string.Empty;
+                return;
+            }
+
+            TokenResponse token = (TokenResponse)response.Result;
+            Settings.Token = JsonConvert.SerializeObject(token);
+            Settings.IsLogin = true;
+
+            IsRunning = false;
+            IsEnabled = true;
+
+            await _navigationService.NavigateAsync($"/{nameof(OnSaleMasterDetailPage)}/NavigationPage/{nameof(ProductsPage)}");
+            Password = string.Empty;
+
         }
 
         private void ForgotPasswordAsync()
