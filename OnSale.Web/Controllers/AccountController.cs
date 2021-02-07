@@ -4,6 +4,7 @@ using OnSale.Web.Helpers;
 using OnSale.Web.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnSale.Common.Enitities;
@@ -355,6 +356,77 @@ namespace OnSale.Web.Controllers
             }
 
             ViewBag.Message = "Пользователь не найден.";
+            return View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Users
+                .Include(u => u.City)
+                .ToListAsync());
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            AddUserViewModel model = new AddUserViewModel
+            {
+                Countries = _combosHelper.GetComboCountries(),
+                Departments = _combosHelper.GetComboDepartments(0),
+                Cities = _combosHelper.GetComboCities(0),
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(AddUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Guid imageId = Guid.Empty;
+
+                if (model.ImageFile != null)
+                {
+                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "users");
+                }
+
+                User user = await _userHelper.AddUserAsync(model, imageId, UserType.Admin);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Этот электронный адрес уже используется.");
+                    model.Countries = _combosHelper.GetComboCountries();
+                    model.Departments = _combosHelper.GetComboDepartments(model.CountryId);
+                    model.Cities = _combosHelper.GetComboCities(model.DepartmentId);
+                    return View(model);
+                }
+
+
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendMail(model.Username, "Подтверждение электронного адреса", $"<h1>Подтверждение электронного адреса</h1>" +
+                    $"Чтобы разрешить пользователю," +
+                    $"пожалуйста, нажмите на эту ссылку:</br></br><a href = \"{tokenLink}\">Подтвердить Email</a>");
+                if (response.IsSuccess)
+                {
+                    ViewBag.Message = "Инструкции, позволяющие разрешить вашему пользователю, были отправлены по электронной почте.";
+                    return View(model);
+                }
+
+                ModelState.AddModelError(string.Empty, response.Message);
+            }
+
+            model.Countries = _combosHelper.GetComboCountries();
+            model.Departments = _combosHelper.GetComboDepartments(model.CountryId);
+            model.Cities = _combosHelper.GetComboCities(model.DepartmentId);
             return View(model);
         }
     }
