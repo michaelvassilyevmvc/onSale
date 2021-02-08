@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using OnSale.Web.Helpers;
 using OnSale.Web.Models;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -429,5 +431,7 @@ namespace OnSale.Web.Controllers
             model.Cities = _combosHelper.GetComboCities(model.DepartmentId);
             return View(model);
         }
+
+        
     }
 }   
