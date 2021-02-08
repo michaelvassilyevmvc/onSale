@@ -11,6 +11,7 @@ using Prism.Navigation;
 using Xamarin.Essentials;
 using OnSale.Prism.ItemViewModels;
 using OnSale.Prism.Helpers;
+using OnSale.Common.Responses;
 
 namespace OnSale.Prism.ViewModels
 {
@@ -21,7 +22,7 @@ namespace OnSale.Prism.ViewModels
         private ObservableCollection<ProductItemViewModel> _products;
         private bool _isRunning;
         private string _search;
-        private List<Product> _myProducts;
+        private List<ProductResponse> _myProducts;
         private DelegateCommand _searchCommand;
 
         public DelegateCommand SearchCommand => _searchCommand ?? (_searchCommand = new DelegateCommand(ShowProducts));
@@ -71,7 +72,7 @@ namespace OnSale.Prism.ViewModels
             IsRunning = true;
 
             string url = App.Current.Resources["UrlAPI"].ToString();
-            Response response = await _apiService.GetListAsync<Product>(url, "/api", "/Products");
+            Response response = await _apiService.GetListAsync<ProductResponse>(url, "/api", "/Products");
 
             IsRunning = false;
 
@@ -81,7 +82,7 @@ namespace OnSale.Prism.ViewModels
                 return;
             }
 
-            this._myProducts = (List<Product>)response.Result;
+            this._myProducts = (List<ProductResponse>)response.Result;
             ShowProducts();
         }
 

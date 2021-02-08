@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using OnSale.Common.Enitities;
 
-namespace OnSale.Common.Enitities
+namespace OnSale.Web.Data.Entities
 {
     public class Product
     {
@@ -40,5 +41,13 @@ namespace OnSale.Common.Enitities
         public string ImageFullPath => ProductImages == null || ProductImages.Count == 0
             ? $"https://onsalesomik.azurewebsites.net/images/noimage.png"
             : ProductImages.FirstOrDefault().ImageFullPath;
+
+        public ICollection<Qualification> Qualifications { get; set; }
+
+        [DisplayName("Product Qualifications")]
+        public int ProductQualifications => Qualifications == null ? 0 : Qualifications.Count;
+
+        [DisplayFormat(DataFormatString = "{0:N2}")]
+        public float Qualification => Qualifications == null || Qualifications.Count == 0 ? 0 : Qualifications.Average(q => q.Score);
     }
 }

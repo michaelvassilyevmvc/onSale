@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnSale.Common.Enitities
+namespace OnSale.Web.Data.Entities
 {
     public class OrderDetail
     {

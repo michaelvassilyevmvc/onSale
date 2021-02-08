@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OnSale.Common.Enitities;
 using OnSale.Web.Data;
+using OnSale.Web.Data.Entities;
 using OnSale.Web.Models;
 
 namespace OnSale.Web.Helpers

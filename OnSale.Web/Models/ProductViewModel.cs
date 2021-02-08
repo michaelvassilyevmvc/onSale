@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OnSale.Common.Enitities;
+using OnSale.Web.Data.Entities;
 
 namespace OnSale.Web.Models
 {
